@@ -28,17 +28,13 @@ public class Core {
 			System.out.println(" ");
 			while (client.isLoggedIn()) {
 				for (String subreddit : Prop.getString("Subreddits").split(" ")) {
+					Thread.sleep(15000);
 					String response = Utils.requestURL("https://www.reddit.com/r/" + subreddit + "/new.json?limit=1");
 					JSONObject json = new JSONObject(response).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 					String permalink = "https://reddit.com" + json.getString("permalink");
-					
-					if (json.isNull("post_hint")) {
-						System.out.println("Found a nulled post_hint post: " + permalink);
-						System.out.println(" ");
-					} else if (json.getBoolean("over_18")) {
-						System.out.println("Found an over_18 post: " + permalink);
-						System.out.println(" ");
-					} else if (!Posted.contains(json.getString("id")) && json.getString("post_hint").equals("image")) {
+
+					if (json.isNull("post_hint") || json.getBoolean("over_18")) continue;
+					if (!Posted.contains(json.getString("id")) && json.getString("post_hint").equals("image")) {
 						System.out.println("Found a new post: " + permalink);
 						URL url = new URL(json.getString("url"));
 						BufferedImage image = ImageIO.read(url);
@@ -56,7 +52,6 @@ public class Core {
 						temp.delete();
 						image.flush();
 					}
-					Thread.sleep(15000);
 				}
 			}
 			throw new Exception("Instagram client has been disconnected: " + client.getSelfProfile().getUsername());
