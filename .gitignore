@@ -1,3 +1,5 @@
-/target/
+.DS_Store
+*.properties
+*.jar
+target/
 .settings/
-bin/
