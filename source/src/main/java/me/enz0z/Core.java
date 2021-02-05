@@ -38,10 +38,7 @@ public class Core {
 					} else if (json.getBoolean("over_18")) {
 						System.out.println("Found an over_18 post: " + permalink);
 						System.out.println(" ");
-					} else if (Posted.contains(json.getString("id"))) {
-						System.out.println("Found a repeated post: " + permalink);
-						System.out.println(" ");
-					} else if (json.getString("post_hint").equals("image")) {
+					} else if (!Posted.contains(json.getString("id")) && json.getString("post_hint").equals("image")) {
 						System.out.println("Found a new post: " + permalink);
 						URL url = new URL(json.getString("url"));
 						BufferedImage image = ImageIO.read(url);
@@ -58,9 +55,6 @@ public class Core {
 						}).join();
 						temp.delete();
 						image.flush();
-					} else {
-						System.out.println("Found an unclassified post: " + permalink);
-						System.out.println(" ");
 					}
 					Thread.sleep(15000);
 				}
