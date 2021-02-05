@@ -25,12 +25,24 @@ public class Core {
 			}
 			IGClient client = IGClient.builder().username(Prop.getString("Username")).password(Prop.getString("Password")).login();
 
+			System.out.println(" ");
+			System.out.println("Instagram client has been connected: " + client.getSelfProfile().getUsername());
+			System.out.println(" ");
 			while (client.isLoggedIn()) {
 				String response = Utils.requestURL("https://www.reddit.com/r/" + args[0] + "/new.json?limit=1");
 				JSONObject json = new JSONObject(response).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 				String permalink = "https://reddit.com" + json.getString("permalink");
 				
-				if (!json.isNull("post_hint") && json.getString("post_hint").equals("image") && !LastPost.contentEquals(json.getString("id"))) {
+				if (json.isNull("post_hint")) {
+					System.out.println("Found a nulled post_hint post: " + permalink);
+					System.out.println(" ");
+				} else if (json.getBoolean("over_18")) {
+					System.out.println("Found an over_18 post: " + permalink);
+					System.out.println(" ");
+				} else if (LastPost.contentEquals(json.getString("id"))) {
+					System.out.println("Found a repeated post: " + permalink);
+					System.out.println(" ");
+				} else if (json.getString("post_hint").equals("image")) {
 					System.out.println("Found a new post: " + permalink);
 					LastPost = json.getString("id");
 					URL url = new URL(json.getString("url"));
@@ -48,12 +60,12 @@ public class Core {
 					temp.delete();
 					image.flush();
 				} else {
-					System.out.println("Found a wrong post: " + permalink);
+					System.out.println("Found an unclassified post: " + permalink);
 					System.out.println(" ");
 				}
 				Thread.sleep(15000);
 			}
-			throw new Exception("Instagram client has been disconnected.");
+			throw new Exception("Instagram client has been disconnected: " + client.getSelfProfile().getUsername());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
