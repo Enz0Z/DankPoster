@@ -46,7 +46,7 @@ public class Core {
 
 						Posted.add(json.getString("id"));
 						ImageIO.write(Utils.resizeImage(image, 600, 600), "jpg", temp);
-						client.actions().timeline().uploadPhoto(temp, json.getString("title") + "\n\n" + json.getString("selftext") + "\n\n🔗 " + permalink).thenAccept(res -> {
+						client.actions().timeline().uploadPhoto(temp, json.getString("title") + "\n\n" + json.getString("selftext") + "\n\n🔗 " + permalink + "\n.\n.\n.\n.\n.\n" + Prop.getString("Tags")).thenAccept(res -> {
 							System.out.println("Published a new post: " + permalink);
 							System.out.println(" ");
 						}).exceptionally(tr -> {

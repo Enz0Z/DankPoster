@@ -4,4 +4,5 @@
 Username: [...]
 Password: [...]
 Subreddits: [...]
+Tags: [...]
 ```
