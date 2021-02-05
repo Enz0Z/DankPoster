@@ -3,4 +3,5 @@
 ```
 Username: [...]
 Password: [...]
+Subreddits: [...]
 ```
