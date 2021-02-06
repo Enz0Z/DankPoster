@@ -32,7 +32,7 @@ public class Core {
 		while (client.isLoggedIn()) {
 			try {
 				for (String subreddit : Prop.getString("Subreddits").split(" ")) {
-					Thread.sleep(15000);
+					Thread.sleep(10000);
 					HttpResponse<String> response = Unirest.get("https://www.reddit.com/r/" + subreddit + "/new.json?limit=1").asString();
 					JSONObject json = new JSONObject(response.getBody()).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 					String permalink = "https://reddit.com" + json.getString("permalink");
