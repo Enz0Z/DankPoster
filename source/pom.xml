@@ -15,6 +15,11 @@
 			<artifactId>instagram4j</artifactId>
 			<version>master-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.11.09</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
