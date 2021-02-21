@@ -1,7 +1,9 @@
 package me.enz0z;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -11,12 +13,10 @@ import org.json.JSONObject;
 
 import com.github.instagram4j.instagram4j.IGClient;
 import com.github.instagram4j.instagram4j.exceptions.IGLoginException;
-import com.github.instagram4j.instagram4j.requests.media.MediaEditRequest;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import me.enz0z.utils.Prop;
-import me.enz0z.utils.Utils;
 
 public class Core {
 
@@ -43,16 +43,11 @@ public class Core {
 						URL url = new URL(json.getString("url"));
 						BufferedImage image = ImageIO.read(url);
 						File temp = File.createTempFile("temp", ".jpg");
-						String caption = json.getString("title") + "\n\n" + json.getString("selftext") + "\n\n🔗 " + permalink + "\n.\n.\n.\n.\n.\n" + Prop.getString("Tags");
 
 						Posted.add(json.getString("id"));
-						ImageIO.write(Utils.resizeImage(image, 600, 600), "jpg", temp);
-						client.actions().timeline().uploadPhoto(temp, caption).thenAccept(res -> {
-							if (res.getMedia().getCaption().getText().length() == 0) {
-								new MediaEditRequest(res.getMedia().getId(), caption).execute(client);
-							}
+						ImageIO.write(resizeImage(image, 600, 600), "jpg", temp);
+						client.actions().timeline().uploadPhoto(temp, json.getString("title") + "\n\n" + json.getString("selftext") + "\n\n🔗 " + permalink + "\n.\n.\n.\n.\n.\n" + Prop.getString("Tags")).thenAccept(res -> {
 							System.out.println("Published a new post: " + res.getMedia().getId());
-							System.out.println("Caption length in this post: " + res.getMedia().getCaption().getText().length());
 							System.out.println(" ");
 						}).exceptionally(tr -> {
 						    tr.printStackTrace();
@@ -69,5 +64,14 @@ public class Core {
 		System.out.println(" ");
 		System.out.println("Instagram client has been disconnected: " + client.getSelfProfile().getUsername());
 		System.out.println(" ");
+	}
+	
+	private static BufferedImage resizeImage(BufferedImage image, int width, int height) throws IOException {
+	    BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+	    Graphics2D graphics2D = resizedImage.createGraphics();
+
+	    graphics2D.drawImage(image, 0, 0, width, height, null);
+	    graphics2D.dispose();
+	    return resizedImage;
 	}
 }
